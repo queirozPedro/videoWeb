@@ -13,7 +13,23 @@ const videos: Video[] = [
     {
         videoURL: "video/video02.mp4",
         imageURL: "image/image02.jpg",
-        description: "Vida animal"
+        description: "Doguinho"
+    },
+    {
+        videoURL: "video/video03.mp4",
+        imageURL: "image/image03.jpg",
+        description: "Mobile Game"
+    },
+    {
+        videoURL: "video/video04.mp4",
+        imageURL: "image/image04.jpg",
+        description: "Virtual Reality"
+    },
+    {
+        videoURL: "video/video05.mp4",
+        imageURL: "image/image05.jpg",
+        description: "Ocean"
     }
+
 ]
 export default videos;

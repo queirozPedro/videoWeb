@@ -2,7 +2,7 @@
 
 import { ReactNode, RefObject, createContext, useEffect, useRef, useState } from "react";
 import videos, { Video } from "../data/video";
-import { Filter, GreenFilter, filters } from "../data/Filter";
+import { Filter, filters } from "../data/Filter";
 
 type HomeContextData = {
     videoURL: string;
@@ -11,10 +11,17 @@ type HomeContextData = {
     currentTime: number;
     videoRef: RefObject<HTMLVideoElement>;
     canvasRef: RefObject<HTMLCanvasElement>;
+    volume: number;
+    oldVolume: number;
+
     playPause: () => void;
     configCurrentTime: (time:number) => void;
     configVideo: (index: number) => void;
     configFilter: (index: number) => void;
+    configVolume: (value:number) => void;
+    configMuteVolume: () => void;
+    passarVideo: () => void;
+    voltarVideo: () => void;
 }
 
 export const HomeContext =
@@ -33,6 +40,8 @@ const HomeContextProvider = ({children}: ProviderProps) => {
     const [currentTime, setCurrentTime] = useState(0);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [volume, setVolume] = useState(0.5);
+    const [oldVolume, setOldVolume] = useState(0);
 
     useEffect(()=>{
         configVideo(videoIndex);
@@ -121,6 +130,30 @@ const HomeContextProvider = ({children}: ProviderProps) => {
         requestAnimationFrame(draw);
     }
 
+    const configVolume = (value: number) => {
+        if(videoRef.current){
+            videoRef.current.volume = value
+            setVolume(value)
+        }
+    }
+
+    const configMuteVolume = () => {
+        if(volume > 0){
+            setOldVolume(volume)
+            configVolume(0)
+        } else if(oldVolume > 0){
+            configVolume(oldVolume)
+        }
+    }
+
+    const passarVideo = () => {
+        configVideo(videoIndex + 1 >= videos.length? 0: videoIndex + 1); 
+    }
+
+    const voltarVideo = () => {
+        configVideo(videoIndex - 1 < 0? videos.length - 1: videoIndex - 1)
+    }
+
     return (
         <HomeContext.Provider value={
             {
@@ -130,10 +163,16 @@ const HomeContextProvider = ({children}: ProviderProps) => {
                 currentTime,
                 videoRef,
                 canvasRef,
+                volume,
+                oldVolume,
                 playPause,
                 configCurrentTime,
                 configVideo,
-                configFilter
+                configFilter,
+                configVolume,
+                configMuteVolume,
+                passarVideo,
+                voltarVideo
             }
         }>
          {children}
